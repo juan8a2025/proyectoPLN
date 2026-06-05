@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 # ============================================================
-# PARTE 1: ALGORITMO DE UNIFICACIÓN (Manejo de Ambigüedad Semántica)
+# PARTE 1: ALGORITMO DE UNIFICACIÓN 
 # ============================================================
 def unificar(dag1, dag2):
     if dag1 is None or dag2 is None:
@@ -144,13 +144,13 @@ def parse_s(tokens, pos=0):
     return {'cat': 'S', 'hijo_tipo': 'VP', 'vp': vp, 'rasgos': vp.get('rasgos', {})}, pos_actual
 
 # ============================================================
-# PARTE 5: TRADUCTOR SEMÁNTICO (Salida Estandarizada Solicitada)
+# PARTE 5: TRADUCTOR SEMÁNTICO 
 # ============================================================
 def extraer_intencion_robot(tokens):
     # Buscamos si es una acción de avance o de giro analizando las palabras clave
     es_giro = "gira" in tokens or "rota" in tokens
     
-    # Valores por defecto requeridos por tu especificación
+    # Valores por defecto 
     accion = "Mover"
     cantidad = 0
     direccion = "No aplica"
@@ -173,7 +173,7 @@ def extraer_intencion_robot(tokens):
         direccion = "No aplica"
         grados = 0
     else:
-        cantidad = 0  # En los giros, según tu ejemplo, la cantidad de casillas es 0
+        cantidad = 0  # En los giros, según el ejemplo, la cantidad de casillas es 0
         
     print(f"Salida -> Acción: {accion} - Cantidad: {cantidad} - Dirección: {direccion} - Grados: {grados}")
 
@@ -244,7 +244,7 @@ def procesar_instruccion(texto_usuario):
     if arbol_dag and pos_final == len(tokens):
         extraer_intencion_robot(tokens)
         
-        # Código opcional para ver el gráfico del árbol sintáctico
+        # gráfico del árbol sintáctico
         tupla_grafica = mapear_dag_a_arbol(arbol_dag)
         fig, ax = plt.subplots(figsize=(10, 5))
         ax.set_xlim(0, 10); ax.set_ylim(0, 6); ax.axis('off')
@@ -255,6 +255,6 @@ def procesar_instruccion(texto_usuario):
     else:
         print("Salida -> Error: Estructura sintáctica o semántica inválida.")
 
-# Pruebas con tus ejemplos exactos:
+# Pruebas con ejemplos:
 procesar_instruccion("avanza 2 casillas")
 procesar_instruccion("gira a la derecha 30 grados")
