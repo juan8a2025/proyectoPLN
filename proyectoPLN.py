@@ -127,6 +127,14 @@ def parse_vp(tokens, pos):
     if pos_actual < len(tokens):
         palabra_det = tokens[pos_actual]
         if palabra_det in lexico and lexico[palabra_det]['cat'] == 'Det':
+            
+            # === CORRECCIÓN DE SEGURIDAD ===
+            # Verificamos que el Det sea un numeral (un número). Si es un conector como "a", abortamos.
+            if lexico[palabra_det].get('tipo_det') != 'numeral':
+                return None, pos
+                
+            # ===============================
+
             np, pos_final_vp = parse_np(tokens, pos_actual + 1)
             if np is not None:
                 check_medida = {'tipo': lexico[palabra_det].get('medida')} if 'medida' in lexico[palabra_det] else {}
@@ -136,7 +144,7 @@ def parse_vp(tokens, pos):
                         'cat': 'VP', 'hijo_tipo': 'V_Det_NP', 'v_word': palabra_v,
                         'det_word': palabra_det, 'np': np, 'rasgos': lexico[palabra_v]
                     }, pos_final_vp
-    return None, pos
+                
 
 def parse_s(tokens, pos=0):
     vp, pos_actual = parse_vp(tokens, pos)
@@ -232,29 +240,42 @@ def dibujar_arbol_formal(nodo_tupla, ax, x, y, ancho):
         dibujar_arbol_formal(hijo, ax, x_hijo, y_hijo, ancho_hijo)
         x_ini += ancho_hijo
 
+
 # ============================================================
-# PARTE 8: CONTROLADOR GENERAL DE PRUEBAS
+# PARTE 8: CONTROLADOR DE PRUEBAS (Con captura de excepciones)
 # ============================================================
 def procesar_instruccion(texto_usuario):
     print(f"\nEntrada: {texto_usuario}")
-    # Simulación del Autómata Finito: Separación estricta por espacios en tokens
+    
+    # 1. Simulación del Autómata Finito (Lexer)
     tokens = texto_usuario.lower().split()
-    arbol_dag, pos_final = parse_s(tokens, 0)
+    
+    try:
+        # 2. Intenta realizar el análisis sintáctico (Parser)
+        arbol_dag, pos_final = parse_s(tokens, 0)
 
-    if arbol_dag and pos_final == len(tokens):
+        # Si el parser devolvió None o no consumió todas las palabras, la estructura está mal
+        if arbol_dag is None or pos_final != len(tokens):
+            print("Salida -> Error: Estructura sintáctica o semántica inválida.")
+            return # Detiene la función aquí para que no intente graficar nada
+
+        # 3. Si la estructura es correcta, ejecuta el Traductor Semántico
         extraer_intencion_robot(tokens)
         
-        # gráfico del árbol sintáctico
+        # 4. Generar gráfico del árbol estructurado (Matplotlib)
         tupla_grafica = mapear_dag_a_arbol(arbol_dag)
         fig, ax = plt.subplots(figsize=(10, 5))
         ax.set_xlim(0, 10); ax.set_ylim(0, 6); ax.axis('off')
         dibujar_arbol_formal(tupla_grafica, ax, 5, 5.5, 10)
-        plt.title(f"Árbol Sintáctico - Compilador de Órdenes", fontsize=11)
+        plt.title(f"Árbol Sintáctico - Compilador de Órdenes Robóticas", fontsize=11)
         plt.tight_layout()
         plt.show()
-    else:
+        
+    except Exception as e:
+        # Aquí capturamos cualquier error inesperado de Python (como intentar leer datos de un None)
+        # y lo transformamos en un mensaje controlado para el usuario
         print("Salida -> Error: Estructura sintáctica o semántica inválida.")
-
+        
 # Pruebas con ejemplos:
 procesar_instruccion("avanza 2 casillas")
 procesar_instruccion("gira a la derecha 30 grados")
@@ -262,3 +283,4 @@ procesar_instruccion("avanza 2 casillas avanza")
 procesar_instruccion("avanza")
 procesar_instruccion("")
 procesar_instruccion("2 casillas")
+procesar_instruccion("avanza a izquierda")
