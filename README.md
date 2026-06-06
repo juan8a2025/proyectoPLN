@@ -34,6 +34,12 @@ gramatica = {
     ]
 }
 
+Analizador Léxico: El Autómata Finito (AFD)Para limpiar el texto que introduce el usuario y dividirlo en palabras individuales (tokens), el sistema simula un Autómata Finito Determinarístico. Su estructura formal simplificada es la siguiente:Estados 
+(Q): {q_0, q_1, q_2, q_3 , q_4}
+Alfabeto : categorias gramaticales {V, Det , NP} 
+(q_0): El punto de partida antes de leer una palabra.
+Estados de Aceptación (q_F): {q_4} (El sistema acepta la entrada cuando termina de procesar palabras o números válidos).
+Cómo funciona el Autómata : Si está en q_0 y lee una palabara de categoria verbo, pasa al estado q_1 (Aceptación de Palabras como "avanza", "grados"). Si está en q_0 y lee una palabra diferente a verbo lo enviaria al estado trampa, en el estado q_1 si llega un Det pasa a q_3 y si llega un NP pasa a q_2 y si pasa a q_3 espara un NP y da la cadena como validad en caso de que llegue un NP pasa a q_2 y estando en q_2 espara un Det parpasar a q_3 y en q_3 espera un NP y llega a q_4 cadena aceptada en cada un de los estados si no llega las palabras esperadas se envia al estado trampa por lo cual no acepta las palabras. 
 
 Estructura del Código
 

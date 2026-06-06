@@ -258,3 +258,7 @@ def procesar_instruccion(texto_usuario):
 # Pruebas con ejemplos:
 procesar_instruccion("avanza 2 casillas")
 procesar_instruccion("gira a la derecha 30 grados")
+procesar_instruccion("avanza 2 casillas avanza")
+procesar_instruccion("avanza")
+procesar_instruccion("")
+procesar_instruccion("2 casillas")
